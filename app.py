@@ -1,13 +1,9 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 import mysql.connector
 
 user_name = "Ion Sorin-Alexandru"
 
-# db = mysql.connector.connect(host='localhost',
-#                     database='flask_app',
-#                      user='root',
-#                      passwd='')
 
 db = mysql.connector.connect(host='sql11.freemysqlhosting.net',
                     database='sql11507799',
@@ -25,7 +21,7 @@ api = Api(app)
 
 
 class PersonalData(Resource):
-    def get(self):
+    def get(self ):
         global user_name
 
         query = "SELECT location, age, gender, mobile, linkedin, email, github, project FROM users where user_name = '{0}'".format(user_name)
@@ -63,7 +59,7 @@ class KeySkills(Resource):
     def get(self):
         global user_name
 
-        query = "SELECT a.id AS employment_id, a.position, a.job_start, a.job_end, c.company_name, c.company_location from employments AS a JOIN users AS b JOIN employers AS C on a.employer_id = c.id where b.user_name = '{0}' ORDER BY a.id DESC".format(user_name)
+        query = "SELECT a.id AS employment_id, a.position, a.job_start, a.job_end, c.company_name, c.company_location from employments AS a JOIN users AS b ON a.user_id = b.id JOIN employers AS c on a.employer_id = c.id where b.user_name = '{0}' ORDER BY a.id DESC".format(user_name)
         unparsed_employments = db_pull(query)
         employments = []
         
@@ -84,6 +80,7 @@ class KeySkills(Resource):
             employments.append(temp)
 
         return employments
+
 
 class UniversityEducation(Resource):
     def get(self):
@@ -167,10 +164,6 @@ class PersonalInterests(Resource):
 
         return result
 
-
-@app.route('/')
-def home():
-    return render_template('index.html')
 
 api.add_resource(PersonalData, '/personal-data')
 api.add_resource(Objectives, '/objectives')
