@@ -29,3 +29,5 @@ localhost:5000/private-education
 localhost:5000/languages
 localhost:5000/driving-license
 localhost:5000/personal-interests
+
+Endpoints have been tested and screen captures from Postman App have been attached to this project
