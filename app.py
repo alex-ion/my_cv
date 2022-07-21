@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
-import mysql.connector
+from flask.cli import with_appcontext
+import mysql.connector, click
+
 
 user_name = "Ion Sorin-Alexandru"
 
@@ -19,9 +21,8 @@ def db_pull(query):
 app = Flask(__name__)
 api = Api(app)
 
-
 class PersonalData(Resource):
-    def get(self ):
+    def get(self):
         global user_name
 
         query = "SELECT location, age, gender, mobile, linkedin, email, github, project FROM users where user_name = '{0}'".format(user_name)
@@ -40,6 +41,13 @@ class PersonalData(Resource):
         }
         return personal_data
 
+@click.command(name='personal-data')
+@with_appcontext
+def personalData():
+    data = PersonalData()
+    print("\n\nPersonal Data Section:")
+    print(data.get())
+
 
 class Objectives(Resource):
     def get(self):
@@ -53,6 +61,14 @@ class Objectives(Resource):
         }
 
         return objectives
+
+
+@click.command(name='objectives')
+@with_appcontext
+def objectives():
+    data = Objectives()
+    print("\n\nObjectives Section:")
+    print(data.get())
 
 
 class KeySkills(Resource):
@@ -82,6 +98,14 @@ class KeySkills(Resource):
         return employments
 
 
+@click.command(name='key-skills')
+@with_appcontext
+def keySkills():
+    data = KeySkills()
+    print("\n\nKey Skills Section:")
+    print(data.get())
+
+
 class UniversityEducation(Resource):
     def get(self):
         global user_name
@@ -100,6 +124,14 @@ class UniversityEducation(Resource):
             education.append(temp)
 
         return education
+
+
+@click.command(name='university-education')
+@with_appcontext
+def universityEducation():
+    data = UniversityEducation()
+    print("\n\nUniversity Education Section:")
+    print(data.get())
 
 
 class PrivateEducation(Resource):
@@ -121,6 +153,13 @@ class PrivateEducation(Resource):
         return education
 
 
+@click.command(name='private-education')
+@with_appcontext
+def privateEducation():
+    data = PrivateEducation()
+    print("\n\nPrivate Education Section:")
+    print(data.get())
+
 
 class Languages(Resource):
     def get(self):
@@ -134,6 +173,15 @@ class Languages(Resource):
         }
 
         return languages
+
+
+@click.command(name='languages')
+@with_appcontext
+def languages():
+    data = Languages()
+    print("\n\nLanguages Section:")
+    print(data.get())
+
 
 
 class DrivingLicense(Resource):
@@ -150,6 +198,13 @@ class DrivingLicense(Resource):
         return result
 
 
+@click.command(name='driving-license')
+@with_appcontext
+def drivingLicense():
+    data = DrivingLicense()
+    print("\n\nDriving License Section:")
+    print(data.get())
+
 
 class PersonalInterests(Resource):
     def get(self):
@@ -164,6 +219,23 @@ class PersonalInterests(Resource):
 
         return result
 
+@click.command(name='personal-interests')
+@with_appcontext
+def personalInterests():
+    data = PersonalInterests()
+    print("\n\nPersonal interests Section:")
+    print(data.get())
+
+
+app.cli.add_command(personalData)
+app.cli.add_command(objectives)
+app.cli.add_command(keySkills)
+app.cli.add_command(universityEducation)
+app.cli.add_command(privateEducation)
+app.cli.add_command(languages)
+app.cli.add_command(drivingLicense)
+app.cli.add_command(personalInterests)
+
 
 api.add_resource(PersonalData, '/personal-data')
 api.add_resource(Objectives, '/objectives')
@@ -174,4 +246,5 @@ api.add_resource(Languages, '/languages')
 api.add_resource(DrivingLicense, '/driving-license')
 api.add_resource(PersonalInterests, '/personal-interests')
 
-app.run(port=5000)
+if __name__ == "__main__":
+    app.run(port=5000)
